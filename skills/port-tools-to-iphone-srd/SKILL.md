@@ -9,7 +9,7 @@ description: Port an existing command-line tool, daemon, shell, library-backed u
 
 Write acceptance criteria before editing:
 
-- Target architecture and minimum iOS version.
+- Target architecture and minimum iOS version (target iOS 26 and higher by default).
 - Required commands, libraries, modules, plugins, and data files.
 - Interactive behavior such as PTYs, key maps, terminal capabilities, history,
   and signals.
@@ -28,7 +28,8 @@ paths.
 
 ## Inspect the SRD reference implementation
 
-Locate Apple's `security-research-device` repository. Read, in order:
+Locate Apple's `security-research-device` repository (path to it should be available in `SRD_REPO_PATH`).
+Read, in order:
 
 1. `example-cryptex/README.md`
 2. `example-cryptex/build_env.mk`
@@ -56,6 +57,10 @@ Inventory:
 Prefer feature reduction over fake detection. Disable obsolete or unsupported
 components explicitly and document the loss.
 
+Remember that on iPhone Security Research Device normal iOS restrictions
+do not apply: you can sign binaries with arbitrary entitlements and
+use any private API as long as the private API exists in the iOS runtime.
+
 ## Build for the actual target
 
 Resolve tools and SDKs through `xcrun`. Apply the same target flags to compile,
@@ -66,6 +71,15 @@ preprocess, and link steps:
 -arch arm64e
 -miphoneos-version-min=<version>
 ```
+
+A specialized research SDK might be available. Use the following command
+to find out:
+
+```shell
+xcrun --show-sdk-path --sdk iphoneos.internal
+```
+
+If that command returns a path to the SDK, use that SDK when compiling for SRD.
 
 For Autoconf:
 
@@ -91,13 +105,14 @@ Install into a distribution root such as:
 <name>-cryptex.root/
 ├── Library/LaunchDaemons/
 ├── usr/bin/
+├── usr/libexec/
 ├── usr/lib/
 └── usr/share/
 ```
 
-Ad hoc sign every Mach-O after its final modification. Include all required
-functions, terminfo, locale, configuration, schemas, certificates, or helper
-data.
+Ad hoc sign every Mach-O after its final modification, including entitlements as needed.
+Include all required functions, terminfo, locale, configuration, schemas, 
+certificates, or helper data.
 
 Never compile a randomized cryptex mount point. Use `CRYPTEX_MOUNT_PATH` in
 launchers and patch resource lookup when upstream insists on absolute paths.
@@ -133,7 +148,7 @@ Run `scripts/validate-srd-binary.sh` on every primary executable:
 
 ```sh
 skills/port-tools-to-iphone-srd/scripts/validate-srd-binary.sh \
-  path/to/cryptex.root/usr/bin/tool arm64e 15.0
+  path/to/cryptex.root/usr/bin/tool arm64e 26.0
 ```
 
 Also verify:

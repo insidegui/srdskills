@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+set -eu
+
+cd skills
+./install
+cd ..

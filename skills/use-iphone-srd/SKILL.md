@@ -33,7 +33,7 @@ and use that alias if available.
 Read [references/srd-reference.md](references/srd-reference.md) for command
 patterns, cryptex runtime behavior, process-launch integration, and diagnostics.
 
-## SSH Access to SRD
+## Useful Environment Variables and SSH Access
 
 Besides the `SRD_REPO_PATH` environment variable, other environment variables
 might be available to help you identify which device the user wants to interact with:

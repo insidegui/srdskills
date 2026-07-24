@@ -40,7 +40,7 @@ SHA-256. It targeted:
 
 - iPhoneOS SDK;
 - arm64e;
-- iOS deployment minimum 15.0;
+- iOS deployment minimum 26.0;
 - an out-of-tree Autoconf build;
 - a single ad-hoc-signed executable plus script/data resources.
 

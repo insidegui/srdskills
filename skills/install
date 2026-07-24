@@ -1,0 +1,152 @@
+#!/usr/bin/env sh
+
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -P "$(dirname "$0")" && pwd)
+
+choose_agent() {
+    while :; do
+        printf '%s\n' \
+            'Install the SRD skills for:' \
+            '  1) Codex' \
+            '  2) Claude' \
+            '  3) Both Codex and Claude'
+        printf 'Choice [1-3]: '
+
+        if ! IFS= read -r answer; then
+            printf '\nError: no agent selection was provided.\n' >&2
+            exit 1
+        fi
+
+        case "$answer" in
+            1 | c | C | codex | Codex)
+                AGENT_CHOICE=codex
+                return
+                ;;
+            2 | claude | Claude)
+                AGENT_CHOICE=claude
+                return
+                ;;
+            3 | b | B | both | Both)
+                AGENT_CHOICE=both
+                return
+                ;;
+            *)
+                printf 'Please enter 1, 2, or 3.\n\n' >&2
+                ;;
+        esac
+    done
+}
+
+choose_scope() {
+    while :; do
+        printf '\n'
+        printf '%s\n' \
+            'Install scope:' \
+            '  1) Current project' \
+            '  2) Global (all projects)'
+        printf 'Choice [1-2]: '
+
+        if ! IFS= read -r answer; then
+            printf '\nError: no installation scope was provided.\n' >&2
+            exit 1
+        fi
+
+        case "$answer" in
+            1 | l | L | local | Local | project | Project)
+                SCOPE_CHOICE=local
+                return
+                ;;
+            2 | g | G | global | Global)
+                SCOPE_CHOICE=global
+                return
+                ;;
+            *)
+                printf 'Please enter 1 or 2.\n\n' >&2
+                ;;
+        esac
+    done
+}
+
+find_project_root() {
+    if [ -n "${SKILLS_PROJECT_DIR:-}" ]; then
+        PROJECT_ROOT=$SKILLS_PROJECT_DIR
+        return
+    fi
+
+    if command -v git >/dev/null 2>&1; then
+        if PROJECT_ROOT=$(git -C "$PWD" rev-parse --show-toplevel 2>/dev/null); then
+            return
+        fi
+    fi
+
+    PROJECT_ROOT=$PWD
+}
+
+install_skills_into() {
+    destination=$1
+    agent_name=$2
+    installed=0
+
+    mkdir -p "$destination"
+
+    for source_dir in "$SCRIPT_DIR"/*; do
+        [ -d "$source_dir" ] || continue
+        [ -f "$source_dir/SKILL.md" ] || continue
+
+        skill_name=${source_dir##*/}
+        target_dir=$destination/$skill_name
+
+        if [ -L "$target_dir" ]; then
+            printf 'Error: refusing to replace symlink %s\n' "$target_dir" >&2
+            return 1
+        fi
+        if [ -e "$target_dir" ] && [ ! -d "$target_dir" ]; then
+            printf 'Error: %s exists and is not a directory.\n' "$target_dir" >&2
+            return 1
+        fi
+
+        mkdir -p "$target_dir"
+        cp -R "$source_dir/." "$target_dir/"
+        printf 'Installed %s for %s at %s\n' \
+            "$skill_name" "$agent_name" "$target_dir"
+        installed=$((installed + 1))
+    done
+
+    if [ "$installed" -eq 0 ]; then
+        printf 'Error: no skill directories were found beside %s.\n' "$0" >&2
+        return 1
+    fi
+}
+
+choose_agent
+choose_scope
+
+if [ "$SCOPE_CHOICE" = local ]; then
+    find_project_root
+    CODEX_DESTINATION=$PROJECT_ROOT/.agents/skills
+    CLAUDE_DESTINATION=$PROJECT_ROOT/.claude/skills
+else
+    if [ -z "${HOME:-}" ]; then
+        printf 'Error: HOME must be set for a global installation.\n' >&2
+        exit 1
+    fi
+    CODEX_DESTINATION=$HOME/.agents/skills
+    CLAUDE_DESTINATION=$HOME/.claude/skills
+fi
+
+printf '\n'
+case "$AGENT_CHOICE" in
+    codex)
+        install_skills_into "$CODEX_DESTINATION" Codex
+        ;;
+    claude)
+        install_skills_into "$CLAUDE_DESTINATION" Claude
+        ;;
+    both)
+        install_skills_into "$CODEX_DESTINATION" Codex
+        install_skills_into "$CLAUDE_DESTINATION" Claude
+        ;;
+esac
+
+printf '\nInstallation complete. Start a new agent session if the skills are not detected immediately.\n'

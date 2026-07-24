@@ -55,7 +55,7 @@ Resolve the active SDK and Clang:
 ```make
 SDK ?= iphoneos
 ARCH ?= arm64e
-IOS_MIN_VERSION ?= 15.0
+IOS_MIN_VERSION ?= 26.0
 
 SDK_PATH = $(shell xcrun --sdk "$(SDK)" --show-sdk-path)
 IOS_CC = $(shell xcrun --sdk "$(SDK)" --find clang)
