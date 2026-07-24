@@ -1,0 +1,4 @@
+interface:
+  display_name: "iPhone SRD Tooling"
+  short_description: "Operate and troubleshoot iPhone SRD tooling"
+  default_prompt: "Use $use-iphone-srd to help me operate and troubleshoot an iPhone Security Research Device."

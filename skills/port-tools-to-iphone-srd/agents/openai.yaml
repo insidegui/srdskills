@@ -1,0 +1,4 @@
+interface:
+  display_name: "Port Tools to iPhone SRD"
+  short_description: "Cross-compile and package tools for iPhone SRD"
+  default_prompt: "Use $port-tools-to-iphone-srd to port this existing tool into an installable SRD cryptex."
