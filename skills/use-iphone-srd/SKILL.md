@@ -24,8 +24,30 @@ environment variable so that you don't need to ask again in the future.
 4. Inspect device state with read-only commands before installing,
    uninstalling, restoring, rebooting, or changing configuration.
 
+The user might have defined aliases for easy SSH access to their SRD.
+If interacting with the device over SSH, check the local SSH config
+for a host that matches the name of the SRD you're trying to interact with
+and use that alias if available.
+**Only interact with the SRD over SSH after explicitly allowed by the user.**
+
 Read [references/srd-reference.md](references/srd-reference.md) for command
 patterns, cryptex runtime behavior, process-launch integration, and diagnostics.
+
+## SSH Access to SRD
+
+Besides the `SRD_REPO_PATH` environment variable, other environment variables
+might be available to help you identify which device the user wants to interact with:
+
+- `SRD_NAME`: the name of the security research device
+- `SRD_UDID`: the MobileDevice UDID
+- `SRD_ECID`: the ECID
+- `SRD_SSH_HOST`: the host to use when connecting over SSH
+- `SRD_SSH_PORT`: the port to use when connecting over SSH
+- `SRD_SSH`: an SSH host alias that can be used instead of host and port (for connecting as root)
+- `SRD_SSH_MOBILE`: an SSH host alias that can be used instead of host and port (for connecting as mobile)
+
+Password authentication over SSH is never allowed, assume the user already has
+the appropriate SSH keys set up on-device and locally.
 
 ## Route the task
 

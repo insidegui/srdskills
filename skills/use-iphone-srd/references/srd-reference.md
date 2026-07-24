@@ -40,6 +40,9 @@ srdtool config
 The current configuration is stored below the user's Library directory in
 `com.apple.srdtool/config.plist`. Most commands also accept an explicit ECID.
 
+**The shell is usually already configured for the connected SRD**, 
+use `srdtool config` to change settings only if explicitly allowed by the user.
+
 An SRD must be kept checked in according to the program requirements:
 
 ```sh
@@ -48,6 +51,8 @@ srdtool checkin
 
 Host network access is required for check-in and operations that contact
 Apple's personalization service.
+
+**Never perform check-ins unless explicitly requested by the user.**
 
 ## srdtool command map
 
@@ -62,8 +67,8 @@ Important command families:
 
 - `list`: discover connected devices and identifiers.
 - `config`: save or display the default user and ECID.
-- `checkin`: perform the program check-in.
-- `restore`: install a research iOS build; use this instead of OTA updates.
+- `checkin`: perform the program check-in; **never run `checkin` without explicit user request**
+- `restore`: install a research iOS build; **never run `restore` without explicit user request**
 - `image4`: extract, decompress, or package firmware payloads.
 - `cryptex`: list, install, and uninstall packaged code.
 - `research`: interact with securityresearchd for spawning, file operations,
@@ -118,7 +123,7 @@ portable.
 
 ## Cryptex runtime integration
 
-Cryptexes mount below:
+On device, Cryptexes mount below:
 
 ```text
 /private/var/run/com.apple.security.cryptexd/mnt/
@@ -154,6 +159,12 @@ Start a new shell or refresh the environment after installing or removing a
 cryptex.
 
 ## securityresearchd workflows
+
+**The on-device `securityresearchd` daemon is typically already installed**, 
+so you don't have to install it unless explicitly requested by the user.
+
+Use `srdtool research ping` to check if the daemon is already installed.
+Its response when installed looks like this: `[Research:Ping] 🎉 Success`.
 
 Set up the research daemon using the repository path required by the installed
 tool:
@@ -210,7 +221,7 @@ instead of disabling unrelated security checks globally.
 
 ### Device is not discovered
 
-1. Unlock and connect the SRD.
+1. Ask user to unlock and connect the SRD.
 2. Run `srdtool list --stream`.
 3. Verify the selected Xcode and host OS requirements.
 4. Check USB connectivity before changing configuration.
@@ -220,6 +231,7 @@ instead of disabling unrelated security checks globally.
 1. Run `srdtool config`.
 2. Compare the saved ECID with `srdtool list`.
 3. Pass `--ecid` explicitly.
+4. When unsure, ask user which SRD they want to interact with
 
 ### Installation or personalization fails
 
@@ -265,3 +277,4 @@ Do not use `research spawn` as an interactive-shell test.
 - Propagate launch environment deliberately.
 - Validate build metadata before debugging runtime behavior.
 - Test non-interactive execution and interactive terminal behavior separately.
+- DO NOT modify configurations on the host unless explicitly requested by the user.
