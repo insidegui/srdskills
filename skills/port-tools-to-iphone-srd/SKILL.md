@@ -72,15 +72,6 @@ preprocess, and link steps:
 -miphoneos-version-min=<version>
 ```
 
-A specialized research SDK might be available. Use the following command
-to find out:
-
-```shell
-xcrun --show-sdk-path --sdk iphoneos.internal
-```
-
-If that command returns a path to the SDK, use that SDK when compiling for SRD.
-
 For Autoconf:
 
 1. Build out of tree.
@@ -163,6 +154,9 @@ Also verify:
 
 Do not claim full success from host-side inspection alone. State clearly when
 device validation remains.
+
+Explicitly ask the user for permission to install the built cryptex and access 
+the device over SSH to test it. Only perform those actions if allowed.
 
 ## Preserve maintainability
 
