@@ -6,7 +6,7 @@ more effectively with security research devices.
 ## Skills
 
 - [`use-iphone-srd`](skills/use-iphone-srd/SKILL.md): Operates, inspects, and troubleshoots an iPhone Security Research Device, including device configuration, cryptex management, SSH access, and runtime diagnostics.
-- [`port-tools-to-iphone-srd`](skills/port-tools-to-iphone-srd/SKILL.md): Adapts and cross-compiles command-line tools, daemons, libraries, and other Unix software for arm64e iOS, including cryptex packaging and runtime validation.
+- [`port-tools-to-iphone-srd`](skills/port-tools-to-iphone-srd/SKILL.md): Adapts and cross-compiles command-line tools, daemons, libraries, and other Unix software for arm64e iOS, including cryptex packaging and runtime validation. My [srdzsh](https://github.com/insidegui/srdzsh) repository is an example of an open-source tool that was ported to iPhone SRD using this skill.
 
 ## Requirements
 
@@ -19,3 +19,4 @@ more effectively with security research devices.
 ## Install/Update
 
 Run the `./install` script. It will ask you if you’d like to install the skills for Codex and/or Claude, and whether to install locally within the current project or globally.
+3
